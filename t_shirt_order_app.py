@@ -1,42 +1,45 @@
-# Simple T-shirt Ordering Program
+# t_shirt_order_app.py
+import streamlit as st
+import pandas as pd
 
 # Available options
-colors = ["black", "red", "white"]
+colors = ["Black", "Red", "White"]
 sizes = ["S", "M", "L", "XL", "XXL"]
-cuts = ["male", "ladies"]
+cuts = ["Male", "Ladies"]
 
-orders = [] # List to store all orders
+# Page title
+st.title("👕 T-shirt Order Form")
 
-def get_choice(prompt, options):
-"""Utility to get a valid choice from user."""
-while True:
-choice = input(f"{prompt} ({'/'.join(options)}): ").strip().lower()
-if choice in [opt.lower() for opt in options]:
-return choice
-print("❌ Invalid choice, please try again.")
+# Store orders in session state
+if "orders" not in st.session_state:
+st.session_state.orders = []
 
-print("👕 Welcome to the T-shirt Order System 👕\n")
+# Order form
+with st.form("order_form"):
+name = st.text_input("Customer Name")
+color = st.selectbox("Choose Color", colors)
+size = st.selectbox("Choose Size", sizes)
+cut = st.radio("Choose Cut", cuts, horizontal=True)
 
-while True:
-name = input("Enter customer's name: ").strip()
-color = get_choice("Choose a color", colors)
-size = get_choice("Choose a size", sizes)
-cut = get_choice("Choose a cut", cuts)
-
-orders.append({
-"name": name,
-"color": color,
-"size": size.upper(),
-"cut": cut
+submitted = st.form_submit_button("Add Order")
+if submitted:
+if name.strip():
+st.session_state.orders.append({
+"Name": name,
+"Color": color,
+"Size": size,
+"Cut": cut
 })
+st.success(f"Order for {name} added!")
+else:
+st.error("Please enter a name before submitting.")
 
-more = input("Add another order? (y/n): ").strip().lower()
-if more != "y":
-break
+# Display order summary
+if st.session_state.orders:
+st.subheader("📋 Order Summary")
+df = pd.DataFrame(st.session_state.orders)
+st.table(df)
 
-print("\n📋 Order Summary:")
-print("-" * 40)
-for i, order in enumerate(orders, 1):
-print(f"{i}. {order['name']} — {order['color'].capitalize()} / {order['size']} / {order['cut'].capitalize()}")
-
-print("\n✅ All orders recorded. Thank you!")
+# Option to export orders
+csv = df.to_csv(index=False).encode('utf-8')
+st.download_button("Download Orders as CSV", csv, "orders.csv", "text/csv")
