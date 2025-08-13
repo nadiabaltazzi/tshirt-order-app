@@ -10,7 +10,7 @@ cuts = ["Male", "Ladies"]
 st.title("👕 T-shirt Order Form")
 
 # Store orders in session state
-if "orders" not in st.session_state:
+if "orders" not in st.session_state:    
 st.session_state.orders = []
 
 # Order form
@@ -47,3 +47,4 @@ csv,
 "orders.csv",
 "text/csv"
 )
+
