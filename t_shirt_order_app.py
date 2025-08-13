@@ -1,4 +1,3 @@
-# t_shirt_order_app.py
 import streamlit as st
 import pandas as pd
 
@@ -42,4 +41,9 @@ st.table(df)
 
 # Option to export orders
 csv = df.to_csv(index=False).encode('utf-8')
-st.download_button("Download Orders as CSV", csv, "orders.csv", "text/csv")
+st.download_button(
+"Download Orders as CSV",
+csv,
+"orders.csv",
+"text/csv"
+)
